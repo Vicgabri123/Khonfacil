@@ -263,7 +263,7 @@ window.KHON_DASHBOARD_BASE = {
       "prejuizo_liquido": 769355638.06
     },
     {
-      "nome": "Centro-O.",
+      "nome": "Centro-Oeste",
       "nome_full": "CENTRO-OESTE",
       "volume": 7833,
       "taxa_rec": 32.44,

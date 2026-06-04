@@ -63,7 +63,7 @@
     fab.id = 'khon-chat-fab';
     fab.className = 'khon-chat-fab';
     fab.innerHTML = `<img src="${iconSrc}" alt="KhonIA">`;
-    fab.title = 'Abrir assistente KhonIA';
+    fab.title = 'Abrir assistente Khon Bot';
 
     const panel = document.createElement('section');
     panel.className = 'khon-chat-panel';
@@ -71,7 +71,7 @@
       <div class="khon-chat-head">
         <div class="khon-chat-head-main">
           <div class="khon-chat-head-icon"><img src="${iconSrc}" alt="KhonIA"></div>
-          <div><strong>KhonIA</strong><span>Assistente digital oficial da KhonFácil</span></div>
+          <div><strong>Khon Bot</strong><span>Assistente digital oficial da KhonFácil</span></div>
         </div>
         <button class="khon-chat-close" type="button"><span class="material-symbols-outlined">close</span></button>
       </div>
@@ -88,7 +88,7 @@
     document.body.appendChild(fab);
 
     const body = panel.querySelector('#khon-chat-body');
-    addMsg(body, 'Olá! Sou o KhonIA. Estou disponível em todas as telas para explicar a solução, o BI, as regras de negócio e o fluxo de negociação.', 'bot');
+    addMsg(body, 'Olá! Sou o Khon Bot. Estou disponível em todas as telas para explicar a solução, o BI, as regras de negócio e o fluxo de negociação.', 'bot');
     fab.addEventListener('click', () => panel.classList.toggle('open'));
     panel.querySelector('.khon-chat-close').addEventListener('click', () => panel.classList.remove('open'));
     panel.querySelectorAll('.khon-chip').forEach(btn => btn.addEventListener('click', () => {

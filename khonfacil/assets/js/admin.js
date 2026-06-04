@@ -55,6 +55,18 @@ function initAssessorias() {
     addLog("Assessoria cadastrada", document.getElementById("nome").value);
     event.target.reset();
     renderAssessorias();
+
+    if (typeof showSystemToast === "function") {
+      showSystemToast(
+        "Assessoria cadastrada",
+        "A nova assessoria foi salva e será considerada nos relatórios e no dashboard após acessar/atualizar a tela de BI.",
+        "success"
+      );
+    }
+
+    if (typeof flashElement === "function") {
+      flashElement("assessoriasCount");
+    }
   });
 }
 
