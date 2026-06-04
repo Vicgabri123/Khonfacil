@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KhonFacil — Dashboard Executivo de Cobrança</title>
+<title>KhonFacil Dashboard Executivo de Cobrança</title>
 <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
 <link rel="apple-touch-icon" href="../assets/img/favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
@@ -1567,7 +1567,24 @@ function getFilteredSlice() {
 
   // ── Filtro por Região
   if(region !== 'all') {
-    const r = DATA.regional.find(x => x.nome.toUpperCase().startsWith(region.toUpperCase().substring(0,4)));
+    const normalizarRegiao = value => String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\./g, '')
+      .toUpperCase()
+      .trim();
+
+    const regionNorm = normalizarRegiao(region);
+
+    const r = DATA.regional.find(x => {
+      const nomeNorm = normalizarRegiao(x.nome);
+      const nomeFullNorm = normalizarRegiao(x.nome_full || x.nome);
+
+      return nomeNorm === regionNorm ||
+        nomeFullNorm === regionNorm ||
+        nomeFullNorm.startsWith(regionNorm.substring(0, 6));
+    });
+
     if(!r) return null;
 
     if(period !== 'all') {
@@ -1589,7 +1606,7 @@ function getFilteredSlice() {
         atraso: r.atraso,
         valor_inadimplente: r.total_devido * w,
         valor_recuperado: r.total_devido * w * r.taxa_rec / 100 * 0.0091,
-        assessorias_count: 4,
+        assessorias_count: DATA.kpis.total_assessorias,
       };
     }
 
@@ -1607,7 +1624,7 @@ function getFilteredSlice() {
       atraso: r.atraso,
       valor_inadimplente: r.total_devido,
       valor_recuperado: r.total_devido * r.taxa_rec / 100 * 0.0091,
-      assessorias_count: 4,
+      assessorias_count: DATA.kpis.total_assessorias,
     };
   }
 
@@ -1629,7 +1646,7 @@ function getFilteredSlice() {
       atraso: DATA.kpis.atraso_medio_dias,
       valor_inadimplente: t.total_devido,
       valor_recuperado: t.arrecadado,
-      assessorias_count: 4,
+      assessorias_count: DATA.kpis.total_assessorias,
     };
   }
 
@@ -1646,7 +1663,7 @@ function getFilteredSlice() {
     atraso: DATA.kpis.atraso_medio_dias,
     valor_inadimplente: DATA.kpis.valor_inadimplente_total,
     valor_recuperado: DATA.kpis.valor_recuperado_total,
-    assessorias_count: 4,
+    assessorias_count: DATA.kpis.total_assessorias,
   };
 }
 
@@ -1868,30 +1885,27 @@ function buildAssTable() {
 
 const AUDIT_QA = [
   { color:'var(--accent)', q:'1. Quantas assessorias existem?',
-    a:`Existem <strong>4 (quatro) assessorias externas de cobrança</strong> ativas na base de dados:<br>
-       1. ACERTA CRÉDITO INTEGRADO — 19.458 casos<br>
-       2. FÊNIX RECUPERAÇÃO DE CRÉDITO — 30.084 casos<br>
-       3. NEXUS MEDIAÇÃO FINANCEIRA — 20.386 casos<br>
-       4. VÉRTICE ASSET & COBRANÇA — 30.072 casos`,
-    highlight:'Total: 100.000 registros distribuídos entre as 4 assessorias' },
+    a:`Existem <strong>${DATA.assessorias.length}</strong> assessoria(s) de cobrança ativas consideradas pelo painel:<br>
+       ${DATA.assessorias.map((a,i)=>`${i+1}. ${a.nome} — ${Number(a.total_casos || 0).toLocaleString('pt-BR')} casos`).join('<br>')}`,
+    highlight:`Total: ${DATA.kpis.total_registros.toLocaleString('pt-BR')} registros distribuídos entre ${DATA.assessorias.length} assessoria(s)` },
   { color:'var(--yellow)', q:'2. As assessorias possuem a mesma eficiência?',
-    a:`<strong>Não.</strong> Embora as taxas de recuperação brutas sejam próximas (33,55% a 34,80%), o Score Composto — que considera recuperação, eficiência financeira e controle de insucesso — revela diferenças significativas:<br>
-       • Acerta: 66,2 pontos | Nexus: 49,8 | Vértice: 20,7 | Fênix: 11,7`,
-    highlight:'Diferença de 464% entre o 1º e o 4º lugar no Score Composto' },
+    a:`<strong>Não.</strong> O Score Composto considera recuperação, eficiência financeira e controle de insucesso. Ranking atual:<br>
+       ${[...DATA.assessorias].sort((a,b)=>b.score_composto-a.score_composto).map(a=>`• ${a.nome_curto || a.nome}: ${fmt(a.score_composto,1)} pontos`).join(' | ')}`,
+    highlight:`A diferença entre o 1º e o último lugar é monitorada pelo Score Composto` },
   { color:'var(--green)', q:'3. Qual é a mais eficiente?',
-    a:`<strong>ACERTA CRÉDITO INTEGRADO</strong> é a mais eficiente sob múltiplos critérios:<br>
-       • Maior taxa de recuperação: 34,80%<br>
-       • Menor atraso médio da carteira: 96 dias<br>
-       • Score Composto mais alto: 66,2 pontos<br>
-       • Menor prejuízo total acumulado: R$ 3,87M`,
-    highlight:'Score 66,2 — Comissão recomendada: 6% (Faixa ALTO)' },
+    a:`<strong>${[...DATA.assessorias].sort((a,b)=>b.score_composto-a.score_composto)[0].nome}</strong> é a mais eficiente no ranking atual:<br>
+       • Taxa de recuperação: ${fmt([...DATA.assessorias].sort((a,b)=>b.score_composto-a.score_composto)[0].taxa_recuperacao,2)}%<br>
+       • Atraso médio: ${fmt([...DATA.assessorias].sort((a,b)=>b.score_composto-a.score_composto)[0].atraso_medio,1)} dias<br>
+       • Score Composto: ${fmt([...DATA.assessorias].sort((a,b)=>b.score_composto-a.score_composto)[0].score_composto,1)} pontos<br>
+       • Comissão recomendada: ${[...DATA.assessorias].sort((a,b)=>b.score_composto-a.score_composto)[0].comissao_pct}%`,
+    highlight:`Melhor assessoria atual por score composto` },
   { color:'var(--red)', q:'4. Qual é a menos eficiente?',
-    a:`<strong>FÊNIX RECUPERAÇÃO DE CRÉDITO</strong> ocupa a última posição:<br>
-       • Maior taxa de insucesso: 16,16%<br>
-       • Maior atraso médio: 111,7 dias<br>
-       • Maior prejuízo acumulado: R$ 6,07M<br>
-       • Menor Score Composto: 11,7 pontos`,
-    highlight:'Score 11,7 — Comissão recomendada: 3% (Faixa BÁSICO)' },
+    a:`<strong>${[...DATA.assessorias].sort((a,b)=>a.score_composto-b.score_composto)[0].nome}</strong> ocupa a menor posição no ranking atual:<br>
+       • Taxa de insucesso: ${fmt([...DATA.assessorias].sort((a,b)=>a.score_composto-b.score_composto)[0].taxa_insucesso,2)}%<br>
+       • Atraso médio: ${fmt([...DATA.assessorias].sort((a,b)=>a.score_composto-b.score_composto)[0].atraso_medio,1)} dias<br>
+       • Score Composto: ${fmt([...DATA.assessorias].sort((a,b)=>a.score_composto-b.score_composto)[0].score_composto,1)} pontos<br>
+       • Comissão recomendada: ${[...DATA.assessorias].sort((a,b)=>a.score_composto-b.score_composto)[0].comissao_pct}%`,
+    highlight:`Ponto de atenção para revisão operacional e governança` },
   { color:'var(--purple)', q:'5. Faz sentido remunerar variavelmente essas assessorias?',
     a:`<strong>Sim, faz todo sentido.</strong> Os dados demonstram performance diferenciada entre as assessorias. Remunerar igualmente quem entrega 34,80% de recuperação versus 33,55% parece mínimo nas taxas brutas, mas o Score Composto mostra divergência real de qualidade operacional. A remuneração variável cria incentivos corretos de mercado e premia quem entrega mais eficiência com menos custo de insucesso.`,
     highlight:'Princípio: pagar mais por melhor resultado mensurável e auditável' },
