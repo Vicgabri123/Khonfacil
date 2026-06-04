@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>KhonFácil — Chatbot Financeiro</title>
+
+  <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="../assets/img/favicon.png">
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- Sidebar dinâmica -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="main-area">
+
+      <!-- Topbar dinâmica -->
+      <header class="topbar" id="topbar"></header>
+
+      <main class="content">
+
+        <section class="chat-layout khonia-page">
+
+          <!-- Painel principal do chat -->
+          <div class="panel chat-box khonia-chat-panel">
+
+            <div class="khonia-hero">
+
+              <div class="khonia-avatar-card">
+                <img
+                  src="../assets/img/khonia-bot.png"
+                  alt="Khon Bot - Assistente Digital da KhonFácil"
+                />
+              </div>
+
+              <div class="khonia-hero-text">
+
+                <span class="badge info">
+                  Assistente oficial da solução
+                </span>
+
+                <h2>Khon Bot Autonegociação 24h</h2>
+
+                <p class="muted">
+                  Assistente digital da KhonFácil para consulta de débitos,
+                  simulações financeiras, negociação autônoma e suporte ao uso da plataforma.
+                </p>
+
+              </div>
+
+              <span class="badge success">
+                RF05 • RF06 • RF07
+              </span>
+
+            </div>
+
+            <!-- Cards de contexto -->
+            <div class="khonia-context-grid">
+
+              <div>
+                <span class="material-symbols-outlined">payments</span>
+                <strong>Débitos</strong>
+                <small>Consulta de pendências, parcelas e acordos.</small>
+              </div>
+
+              <div>
+                <span class="material-symbols-outlined">calculate</span>
+                <strong>Simulações</strong>
+                <small>IPCA, INCC e propostas personalizadas.</small>
+              </div>
+
+              <div>
+                <span class="material-symbols-outlined">verified_user</span>
+                <strong>Autonomia</strong>
+                <small>Fluxo sem intervenção humana.</small>
+              </div>
+
+            </div>
+
+            <!-- Mensagens do chatbot -->
+            <div class="chat-messages" id="chatMessages"></div>
+
+            <!-- Botões rápidos gerados pelo chatbot.js -->
+            <div class="quick-actions" id="quickActions"></div>
+
+          </div>
+
+          <!-- Painel lateral -->
+          <aside class="panel khonia-side-panel">
+
+            <div class="khonia-side-header">
+
+              <img
+                src="../assets/img/khonia-bot.png"
+                alt="KhonIA"
+              />
+
+              <div>
+                <h2>Central Khon Bot</h2>
+
+                <p class="muted">
+                  Suporte inteligente ao consorciado e apoio estratégico à redução da inadimplência.
+                </p>
+              </div>
+
+            </div>
+
+            <div class="khonia-feature-list">
+
+              <div>
+                <span class="material-symbols-outlined">support_agent</span>
+                <p>Consulta e orientação 24h dentro da plataforma.</p>
+              </div>
+
+              <div>
+                <span class="material-symbols-outlined">trending_up</span>
+                <p>Simulação de reajustes por IPCA e INCC.</p>
+              </div>
+
+              <div>
+                <span class="material-symbols-outlined">handshake</span>
+                <p>Proposta de negociação sem atendente humano.</p>
+              </div>
+
+              <div>
+                <span class="material-symbols-outlined">qr_code_2</span>
+                <p>Pagamento demonstrativo via Pix ou cartão.</p>
+              </div>
+
+            </div>
+
+            <!-- Box de negociação -->
+            <div
+              id="negotiationBox"
+              class="khonia-negotiation"
+              style="display:none"
+            >
+
+              <h2>Proposta de acordo</h2>
+
+              <p class="muted" style="margin:8px 0 14px">
+                Fluxo concluído sem intervenção humana.
+              </p>
+
+              <label for="valorOriginal">Valor original</label>
+              <input id="valorOriginal" type="number">
+
+              <label for="entrada">Entrada</label>
+              <input id="entrada" type="number">
+
+              <label for="parcelas">Parcelas</label>
+              <input id="parcelas" type="number" min="1" max="12">
+
+              <div class="actions">
+
+                <button
+                  class="btn secondary"
+                  type="button"
+                  onclick="calcularProposta()"
+                >
+                  <span class="material-symbols-outlined">calculate</span>
+                  Calcular
+                </button>
+
+                <button
+                  class="btn primary"
+                  type="button"
+                  onclick="confirmarNegociacao()"
+                >
+                  <span class="material-symbols-outlined">check_circle</span>
+                  Confirmar
+                </button>
+
+              </div>
+
+              <p
+                class="muted"
+                id="propostaResultado"
+                style="margin-top:14px"
+              ></p>
+
+            </div>
+
+          </aside>
+
+        </section>
+
+      </main>
+
+      <div class="footer-note">
+        KhonFácil • MVP acadêmico • HTML, CSS, JavaScript e LocalStorage
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../assets/js/mockData.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/chatWidget.js"></script>
+  <script src="../assets/js/chatbot.js"></script>
+
+  <script>
+    initApp("chatbot", ["cliente", "admin"]);
+    initChatbot();
+  </script>
+
+</body>
+
+</html>

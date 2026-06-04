@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KhonFácil — Auditoria</title>
+  <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="../assets/img/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main-area">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+
+    <section class="page-grid">
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>2ª verificação da base consolidada</h2>
+            <p class="muted">Checagem adicional sobre integridade, volume e consistência dos dados presentes no relatório consolidado</p>
+          </div>
+          <span class="badge success">Base validada</span>
+        </div>
+        <div id="auditVerificationSummary" class="audit-verification-grid"></div>
+        <h3 class="page-section-title">Evidências da checagem</h3>
+        <div id="auditVerificationList" class="verification-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Matriz de atendimento dos requisitos</h2>
+            <p class="muted">Rastreabilidade entre requisitos funcionais e implementação no MVP</p>
+          </div>
+          <span class="badge purple">Engenharia de Requisitos</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Requisito</th><th>Status</th><th>Evidência no sistema</th></tr></thead>
+            <tbody id="auditoriaTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Logs de acesso e ações</h2>
+          <span class="badge info">LGPD • Auditoria</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Data</th><th>Ação</th><th>Detalhe</th></tr></thead>
+            <tbody id="logsTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+      </main>
+      <div class="footer-note">KhonFácil • MVP acadêmico • HTML, CSS, JavaScript e LocalStorage</div>
+    </div>
+  </div>
+
+  <script src="../assets/js/mockData.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/chatWidget.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    initApp("auditoria", ["admin"]);
+    initAuditoria();
+  </script>
+</body>
+</html>

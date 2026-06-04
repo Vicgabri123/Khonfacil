@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KhonFácil — Fidelidade</title>
+  <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="../assets/img/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main-area">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+
+    <section class="page-grid">
+      <div class="kpi-grid" id="fidelidadeResumo"></div>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Histórico de pontos</h2>
+            <p class="muted">Pontos registrados automaticamente por comportamento adimplente e negociação concluída.</p>
+          </div>
+          <span class="badge success">RF08 • RF09</span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Data</th><th>Motivo</th><th>Pontos</th></tr></thead>
+            <tbody id="pontosTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Benefícios disponíveis</h2>
+        <p class="muted" style="margin-top:8px">Bronze: alertas básicos • Prata: lembretes personalizados • Ouro: prioridade em acordos • Diamante: benefícios especiais.</p>
+      </section>
+    </section>
+
+      </main>
+      <div class="footer-note">KhonFácil • MVP acadêmico • HTML, CSS, JavaScript e LocalStorage</div>
+    </div>
+  </div>
+
+  <script src="../assets/js/mockData.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/chatWidget.js"></script>
+  <script src="../assets/js/cliente.js"></script>
+  <script>
+    initApp("fidelidade", ["cliente"]);
+    initFidelidade();
+  </script>
+</body>
+</html>

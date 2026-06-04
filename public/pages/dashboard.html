@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KhonFacil — Dashboard Executivo de Cobrança</title>
+<link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+<link rel="apple-touch-icon" href="../assets/img/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:         #dff0f8;
+    --bg2:        #eaf6fc;
+    --surface:    #ffffff;
+    --surface2:   #f0f8ff;
+    --border:     #b8ddf0;
+    --border2:    #cce8f4;
+    --accent:     #0a84c8;
+    --accent2:    #1ea0e0;
+    --accent3:    #0060a0;
+    --green:      #19a974;
+    --red:        #d63030;
+    --yellow:     #d4860a;
+    --purple:     #6040b0;
+    --text:       #0a1828;
+    --text2:      #1a3050;
+    --muted:      #4872a0;
+    --muted2:     #7898b8;
+    --glass:      rgba(255,255,255,0.72);
+    --glass2:     rgba(220,240,255,0.60);
+    --shadow:     0 2px 16px rgba(10,80,140,0.10);
+    --shadow2:    0 6px 32px rgba(10,80,140,0.14);
+    --radius:     16px;
+    --radius2:    10px;
+    --font:       'Nunito', sans-serif;
+    --font2:      'Nunito Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: linear-gradient(160deg, #c8e8f8 0%, #d8f0fc 30%, #e8f8ff 60%, #d0e8f8 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── AERO NOISE ── */
+  body::before {
+    content:'';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(255,255,255,0.45) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(140,210,255,0.25) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 60% 20%, rgba(200,235,255,0.30) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(220,240,255,0.82);
+    backdrop-filter: blur(24px) saturate(1.6);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    border-bottom: 1.5px solid rgba(160,210,240,0.70);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset, var(--shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 36px;
+    height: 66px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.15rem;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+    color: var(--accent3);
+  }
+
+  .logo-icon {
+    width: 42px; height: 42px;
+    background: rgba(255,255,255,0.72);
+    border: 1.5px solid rgba(160,210,240,0.55);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(10,100,180,0.18), 0 1px 0 rgba(255,255,255,0.4) inset;
+  }
+  .logo-icon img { width: 30px; height: 30px; object-fit: contain; }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-meta {
+    font-family: var(--font2);
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, rgba(26,160,224,0.18), rgba(10,100,180,0.10));
+    border: 1.5px solid rgba(10,130,200,0.35);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.65rem;
+    color: var(--accent3);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset;
+  }
+
+  .live-dot {
+    width: 7px; height: 7px;
+    background: #19c870;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #19c870;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+  /* ── LAYOUT ── */
+  main {
+    position: relative;
+    z-index: 1;
+    padding: 32px 36px;
+    max-width: 1640px;
+    margin: 0 auto;
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content:'';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ── GLASS CARD ── */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border: 1.5px solid rgba(180,220,245,0.80);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow), 0 1px 0 rgba(255,255,255,0.9) inset;
+  }
+
+  /* ── FILTERS ── */
+  .filters-bar {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    padding: 18px 22px;
+    align-items: flex-end;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .filter-group label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  select {
+    background: rgba(255,255,255,0.85);
+    border: 1.5px solid var(--border);
+    color: var(--text2);
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    min-width: 170px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
+  }
+  select:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(30,160,224,0.15), 0 1px 0 rgba(255,255,255,0.9) inset; }
+
+  .btn-reset {
+    background: rgba(255,255,255,0.70);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: all .2s;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
+  }
+  .btn-reset:hover { border-color: var(--accent2); color: var(--accent); background: rgba(220,240,255,0.85); }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+
+  .kpi-card {
+    padding: 22px 22px 18px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .25s, box-shadow .25s;
+    cursor: default;
+  }
+
+  .kpi-card::after {
+    content:'';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--kpi-color, var(--accent));
+    border-radius: var(--radius) var(--radius) 0 0;
+    opacity: 0.75;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow2), 0 1px 0 rgba(255,255,255,0.9) inset;
+  }
+
+  .kpi-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(220,240,255,0.70));
+    border: 1.5px solid rgba(180,220,245,0.60);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
+  }
+
+  .kpi-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 5px;
+    font-family: var(--font2);
+  }
+
+  .kpi-value {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--kpi-color, var(--text));
+    line-height: 1;
+    letter-spacing: -1.5px;
+  }
+
+  .kpi-sub {
+    font-size: 0.71rem;
+    color: var(--muted2);
+    margin-top: 7px;
+    font-family: var(--font2);
+    font-weight: 400;
+  }
+
+  .kpi-delta {
+    position: absolute;
+    top: 18px; right: 18px;
+    font-size: 0.67rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-family: var(--font2);
+  }
+  .delta-bad  { background: rgba(214,48,48,0.10); color: #b82020; border: 1px solid rgba(214,48,48,0.20); }
+  .delta-good { background: rgba(25,169,116,0.10); color: #158060; border: 1px solid rgba(25,169,116,0.20); }
+  .delta-neu  { background: rgba(72,114,160,0.10); color: var(--muted); border: 1px solid rgba(72,114,160,0.20); }
+
+  /* ── CHART GRID ── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+
+  .chart-card {
+    padding: 22px 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .chart-card.full { grid-column: 1 / -1; }
+
+  .chart-title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--text2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chart-title em {
+    font-size: 0.65rem;
+    color: var(--muted2);
+    font-style: normal;
+    font-weight: 400;
+    font-family: var(--font2);
+  }
+  .chart-wrap { position: relative; height: 260px; }
+  .chart-wrap.tall { height: 310px; }
+
+  /* ── TABS ── */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    background: var(--glass2);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--font);
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 8px 18px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--accent); background: rgba(220,240,255,0.60); }
+  .tab-btn.active {
+    color: var(--accent3);
+    background: rgba(255,255,255,0.90);
+    box-shadow: var(--shadow), 0 1px 0 rgba(255,255,255,0.95) inset;
+  }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.85);
+  }
+  thead {
+    background: linear-gradient(180deg, rgba(220,240,255,0.90), rgba(200,230,248,0.80));
+  }
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-family: var(--font2);
+    white-space: nowrap;
+    border-bottom: 1.5px solid var(--border);
+  }
+  td {
+    padding: 13px 16px;
+    border-bottom: 1px solid rgba(180,220,245,0.40);
+    vertical-align: middle;
+    color: var(--text2);
+    font-weight: 600;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(200,235,255,0.30); }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.63rem;
+    font-weight: 800;
+    white-space: nowrap;
+    font-family: var(--font2);
+    letter-spacing: 0.5px;
+  }
+  .badge-elite  { background: rgba(96,64,176,0.10); color: var(--purple); border: 1px solid rgba(96,64,176,0.25); }
+  .badge-alto   { background: rgba(10,132,200,0.10); color: var(--accent3); border: 1px solid rgba(10,132,200,0.25); }
+  .badge-medio  { background: rgba(212,134,10,0.10); color: var(--yellow); border: 1px solid rgba(212,134,10,0.25); }
+  .badge-basico { background: rgba(214,48,48,0.10); color: var(--red); border: 1px solid rgba(214,48,48,0.20); }
+
+  .bar-mini {
+    width: 100px; height: 6px;
+    background: rgba(180,220,245,0.50);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bar-mini-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width .8s ease;
+  }
+
+  /* ── DIVIDER ── */
+  .glow-line {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 36px 0;
+  }
+
+  /* ── AUDIT CARDS ── */
+  .audit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: 14px;
+  }
+
+  .audit-card {
+    padding: 22px 22px 18px 26px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .25s;
+  }
+  .audit-card:hover { transform: translateY(-2px); }
+
+  .audit-card::before {
+    content:'';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--audit-color, var(--accent));
+    border-radius: var(--radius) 0 0 var(--radius);
+  }
+
+  .audit-num {
+    font-size: 0.60rem;
+    font-weight: 700;
+    color: var(--muted2);
+    margin-bottom: 7px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-family: var(--font2);
+  }
+
+  .audit-q {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .audit-a {
+    font-size: 0.80rem;
+    color: var(--muted);
+    line-height: 1.75;
+    font-family: var(--font2);
+    font-weight: 400;
+  }
+
+  .audit-a strong { color: var(--text2); font-family: var(--font); font-weight: 800; }
+
+  .audit-highlight {
+    background: linear-gradient(135deg, rgba(200,235,255,0.70), rgba(220,245,255,0.50));
+    border: 1.5px solid rgba(160,215,245,0.60);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    font-size: 0.77rem;
+    color: var(--accent3);
+    font-weight: 700;
+    font-family: var(--font2);
+    box-shadow: 0 1px 0 rgba(255,255,255,0.85) inset;
+  }
+
+  /* ── REMUNERAÇÃO ── */
+  .remun-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .remun-card {
+    padding: 20px 20px 16px;
+  }
+
+  .remun-rank {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--muted2);
+    margin-bottom: 5px;
+    font-family: var(--font2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .remun-name {
+    font-size: 0.90rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.3;
+    color: var(--text);
+  }
+
+  .remun-score-bar {
+    height: 5px;
+    background: rgba(180,220,245,0.50);
+    border-radius: 3px;
+    margin: 10px 0 8px;
+    overflow: hidden;
+  }
+
+  .remun-score-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  .remun-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+  }
+  .remun-row span:first-child { color: var(--muted2); font-family: var(--font2); font-weight: 400; }
+  .remun-row span:last-child  { color: var(--text2); font-weight: 700; }
+
+  /* ── INSIGHTS ── */
+  .insights-list { display: grid; gap: 10px; }
+
+  .insight-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 18px;
+    font-size: 0.82rem;
+    color: var(--text2);
+    line-height: 1.65;
+    transition: transform .2s;
+    font-weight: 500;
+  }
+  .insight-item:hover { transform: translateX(4px); }
+
+  .insight-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 36px 36px 28px;
+    font-size: 0.68rem;
+    color: var(--muted2);
+    border-top: 1.5px solid var(--border);
+    margin-top: 56px;
+    line-height: 2;
+    font-family: var(--font2);
+    background: rgba(220,240,255,0.40);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1000px) {
+    main { padding: 20px 20px; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .audit-grid { grid-template-columns: 1fr; }
+    header { padding: 0 20px; }
+  }
+  @media (max-width: 600px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .kpi-value { font-size: 1.5rem; }
+    .remun-grid { grid-template-columns: 1fr; }
+    .tab-bar { border-radius: 10px; }
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-in { animation: fadeIn .5s ease forwards; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+  .stagger > * { animation: fadeIn .5s ease forwards; opacity: 0; }
+  .stagger > *:nth-child(1){animation-delay:.05s}
+  .stagger > *:nth-child(2){animation-delay:.10s}
+  .stagger > *:nth-child(3){animation-delay:.15s}
+  .stagger > *:nth-child(4){animation-delay:.20s}
+  .stagger > *:nth-child(5){animation-delay:.25s}
+  .stagger > *:nth-child(6){animation-delay:.30s}
+
+  /* ── KHONFÁCIL V4: refinamento dashboard para banca ── */
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    line-height: 1;
+  }
+
+  .logo-icon {
+    background: rgba(255,255,255,0.72) !important;
+    border: 1.5px solid rgba(160,210,240,0.55);
+  }
+
+  .logo-icon img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+  }
+
+  .tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .tab-btn .material-symbols-outlined {
+    font-size: 19px;
+    color: currentColor;
+  }
+
+  .kpi-icon .material-symbols-outlined {
+    font-size: 24px;
+    color: var(--kpi-color, var(--accent));
+  }
+
+  .chart-card {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .chart-wrap {
+    height: clamp(230px, 30vh, 320px);
+    min-height: 220px;
+    max-height: 360px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .chart-wrap.tall {
+    height: clamp(280px, 38vh, 400px);
+    min-height: 260px;
+    max-height: 430px;
+  }
+
+  .chart-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  .glass,
+  .kpi-card,
+  .chart-card,
+  .audit-card,
+  .remun-card,
+  .insight-item {
+    transition: transform .24s cubic-bezier(.16,1,.3,1), box-shadow .24s cubic-bezier(.16,1,.3,1), border-color .24s cubic-bezier(.16,1,.3,1);
+  }
+
+  .glass:hover,
+  .kpi-card:hover,
+  .audit-card:hover,
+  .remun-card:hover {
+    border-color: rgba(10,132,200,.34);
+  }
+
+  .insight-item .material-symbols-outlined {
+    color: var(--accent);
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  @media (min-width: 901px) and (max-height: 760px) {
+    main {
+      padding-top: 22px;
+    }
+
+    .kpi-grid {
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .kpi-card {
+      padding: 18px;
+    }
+
+    .kpi-value {
+      font-size: 1.72rem;
+    }
+
+    .chart-wrap {
+      height: 245px;
+    }
+
+    .chart-wrap.tall {
+      height: 300px;
+    }
+
+    .glow-line {
+      margin: 26px 0;
+    }
+  }
+
+  @media (max-width: 700px) {
+    body {
+      padding-left: 0 !important;
+    }
+
+    .chart-wrap,
+    .chart-wrap.tall {
+      height: 280px;
+      min-height: 260px;
+    }
+
+    .kpi-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+
+
+  /* =========================================================
+     KHONFÁCIL — PADRONIZAÇÃO VISUAL FINAL DO DASHBOARD
+     ========================================================= */
+
+  :root {
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+  }
+
+  body.dashboard-body {
+    background:
+      radial-gradient(circle at top right, rgba(10, 132, 200, .12), transparent 30%),
+      linear-gradient(135deg, #eef6fb, #dceeff);
+    font-family: "Segoe UI", var(--font), system-ui, sans-serif;
+    color: #0f172a;
+  }
+
+  body.dashboard-body::before {
+    opacity: .72;
+  }
+
+  .dashboard-topbar {
+    height: 72px;
+    padding: 0 28px;
+    background: rgba(255, 255, 255, .86);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid #d7e3ef;
+    box-shadow: 0 6px 22px rgba(15, 23, 42, .05);
+  }
+
+  .dashboard-logo {
+    gap: 13px;
+    color: #1e3a8a;
+  }
+
+  .dashboard-brand-copy {
+    display: grid;
+    gap: 2px;
+    line-height: 1.15;
+  }
+
+  .dashboard-brand-copy strong {
+    font-size: 1.05rem;
+    letter-spacing: -.35px;
+  }
+
+  .dashboard-brand-copy span {
+    font-size: .75rem;
+    color: #64748b;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .dashboard-header-actions {
+    gap: 12px;
+  }
+
+  .dashboard-user-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f8fbff;
+    border: 1px solid #d7e3ef;
+    border-radius: 999px;
+    padding: 8px 12px;
+    color: #64748b;
+    font-size: .84rem;
+    font-weight: 800;
+  }
+
+  .dashboard-user-pill .material-symbols-outlined {
+    color: #1e3a8a;
+    font-size: 20px;
+  }
+
+  main {
+    max-width: 1500px;
+    padding: 26px;
+  }
+
+  .dashboard-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 18px;
+    padding: 22px 24px;
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at top left, rgba(10,132,200,.15), transparent 34%),
+      rgba(255,255,255,.92);
+    border: 1px solid #d7e3ef;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, .06);
+  }
+
+  .dashboard-hero-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .dashboard-hero-icon {
+    width: 58px;
+    height: 58px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(10,132,200,.15), rgba(30,58,138,.12));
+    color: #1e3a8a;
+    border: 1px solid rgba(10,132,200,.18);
+  }
+
+  .dashboard-hero-icon .material-symbols-outlined {
+    font-size: 30px;
+  }
+
+  .dashboard-hero-copy h1 {
+    margin: 8px 0 6px;
+    font-size: clamp(1.45rem, 2.4vw, 2.3rem);
+    color: #0f172a;
+    line-height: 1.05;
+    letter-spacing: -1.2px;
+  }
+
+  .dashboard-hero-copy p {
+    max-width: 780px;
+    color: #64748b;
+    font-size: .95rem;
+    line-height: 1.55;
+  }
+
+  .dashboard-hero-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .metric-pill {
+    min-width: 130px;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    background: #ffffff;
+    border: 1px solid #d7e3ef;
+    border-radius: 16px;
+    padding: 12px 13px;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, .05);
+  }
+
+  .metric-pill strong {
+    color: #1e3a8a;
+    font-size: 1.02rem;
+    line-height: 1;
+  }
+
+  .metric-pill span {
+    color: #64748b;
+    font-size: .72rem;
+    font-weight: 800;
+  }
+
+  .glass,
+  .kpi-card,
+  .chart-card,
+  .audit-card,
+  .remun-card,
+  .insight-item,
+  .filters-bar,
+  .tab-bar,
+  .table-wrap {
+    border-color: #d7e3ef;
+    background: rgba(255,255,255,.92);
+    box-shadow: 0 8px 24px rgba(15,23,42,.06);
+  }
+
+  .filters-bar {
+    border-radius: 20px;
+    padding: 16px 18px;
+    margin-bottom: 22px;
+  }
+
+  .btn-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border-radius: 12px;
+    background: #edf6ff;
+    color: #1e3a8a;
+    border: 1px solid #d7e3ef;
+  }
+
+  .btn-reset .material-symbols-outlined {
+    font-size: 19px;
+  }
+
+  select {
+    border-radius: 12px;
+    background: #ffffff;
+    border-color: #d7e3ef;
+    min-height: 42px;
+  }
+
+  .section-label {
+    color: #0a84c8;
+    margin-top: 10px;
+  }
+
+  .kpi-card,
+  .chart-card,
+  .audit-card,
+  .remun-card {
+    border-radius: 18px;
+  }
+
+  .kpi-card:hover,
+  .chart-card:hover,
+  .audit-card:hover,
+  .remun-card:hover,
+  .dashboard-hero:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(15,23,42,.09);
+    border-color: rgba(10,132,200,.30);
+  }
+
+  .tab-bar {
+    position: sticky;
+    top: 84px;
+    z-index: 60;
+    border-radius: 18px;
+    padding: 7px;
+    margin-bottom: 22px;
+  }
+
+  .tab-btn {
+    border-radius: 12px;
+    padding: 10px 15px;
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, #0a84c8, #1e3a8a);
+    color: white;
+  }
+
+  .chart-title {
+    color: #123a73;
+    font-size: .92rem;
+  }
+
+  .chart-title::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 99px;
+    background: #0a84c8;
+    display: inline-block;
+  }
+
+  .table-wrap {
+    overflow: auto;
+    border-radius: 18px;
+  }
+
+  table {
+    background: #ffffff;
+  }
+
+  thead {
+    background: #f8fbff;
+  }
+
+  th {
+    color: #64748b;
+  }
+
+  td {
+    color: #0f172a;
+  }
+
+  tr:hover td {
+    background: #f8fbff;
+  }
+
+  .dashboard-footer {
+    margin-top: 46px;
+    padding: 24px 28px 30px;
+    background: transparent;
+    border-top: 1px solid #d7e3ef;
+    color: #64748b;
+  }
+
+  /* Tema escuro alinhado com o restante do site */
+  body.theme-dark.dashboard-body {
+    background:
+      radial-gradient(circle at top right, rgba(10,132,200,.13), transparent 30%),
+      linear-gradient(135deg, #07111f, #0f172a);
+    color: #f8fafc;
+  }
+
+  body.theme-dark .dashboard-topbar {
+    background: rgba(15,23,42,.92);
+    border-bottom-color: rgba(148,163,184,.24);
+    box-shadow: 0 8px 24px rgba(0,0,0,.18);
+  }
+
+  body.theme-dark .dashboard-brand-copy strong,
+  body.theme-dark .dashboard-hero-copy h1,
+  body.theme-dark .chart-title,
+  body.theme-dark .audit-q,
+  body.theme-dark .remun-name,
+  body.theme-dark .kpi-value {
+    color: #eaf6ff;
+  }
+
+  body.theme-dark .dashboard-brand-copy span,
+  body.theme-dark .dashboard-hero-copy p,
+  body.theme-dark .header-meta,
+  body.theme-dark .kpi-label,
+  body.theme-dark .kpi-sub,
+  body.theme-dark .audit-a,
+  body.theme-dark .remun-row span:first-child,
+  body.theme-dark .dashboard-footer {
+    color: #94a3b8;
+  }
+
+  body.theme-dark .dashboard-hero,
+  body.theme-dark .glass,
+  body.theme-dark .kpi-card,
+  body.theme-dark .chart-card,
+  body.theme-dark .audit-card,
+  body.theme-dark .remun-card,
+  body.theme-dark .insight-item,
+  body.theme-dark .filters-bar,
+  body.theme-dark .tab-bar,
+  body.theme-dark .table-wrap,
+  body.theme-dark .metric-pill,
+  body.theme-dark .dashboard-user-pill {
+    background: rgba(17,24,39,.94);
+    border-color: rgba(148,163,184,.24);
+    color: #f8fafc;
+  }
+
+  body.theme-dark select {
+    background: #0f172a;
+    color: #f8fafc;
+    border-color: rgba(148,163,184,.24);
+  }
+
+  body.theme-dark table,
+  body.theme-dark thead {
+    background: #111827;
+  }
+
+  body.theme-dark td {
+    color: #f8fafc;
+    border-bottom-color: rgba(148,163,184,.14);
+  }
+
+  body.theme-dark th {
+    color: #94a3b8;
+    border-bottom-color: rgba(148,163,184,.24);
+  }
+
+  body.theme-dark tr:hover td {
+    background: rgba(30,58,138,.22);
+  }
+
+  body.theme-dark .metric-pill strong,
+  body.theme-dark .dashboard-user-pill .material-symbols-outlined {
+    color: #93c5fd;
+  }
+
+  body.theme-dark .btn-reset {
+    background: rgba(10,132,200,.12);
+    color: #dff4ff;
+    border-color: rgba(10,132,200,.30);
+  }
+
+  @media (max-width: 1000px) {
+    .dashboard-topbar {
+      height: auto;
+      min-height: 72px;
+      padding: 12px 18px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .dashboard-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .dashboard-hero-metrics {
+      justify-content: flex-start;
+    }
+
+    .tab-bar {
+      position: static;
+    }
+  }
+
+  @media (max-width: 640px) {
+    main {
+      padding: 18px;
+    }
+
+    .dashboard-brand-copy span,
+    .header-meta {
+      display: none;
+    }
+
+    .dashboard-user-pill {
+      display: none;
+    }
+
+    .dashboard-hero-main {
+      flex-direction: column;
+    }
+
+    .dashboard-hero {
+      padding: 18px;
+    }
+
+    .dashboard-hero-metrics {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    .metric-pill {
+      width: 100%;
+    }
+  }
+
+</style>
+</head>
+<body class="dashboard-body">
+
+<!-- ═══ HEADER ═══ -->
+<header class="dashboard-topbar">
+  <div class="logo dashboard-logo">
+    <div class="logo-icon">
+      <img src="../assets/img/logo-khonfacil-icon.png" alt="KhonFácil">
+    </div>
+
+    <div class="dashboard-brand-copy">
+      <strong>Dashboard BI Executivo</strong>
+      <span>Centralização de cotas, cobrança, recuperação e inadimplência</span>
+    </div>
+  </div>
+
+  <div class="header-right dashboard-header-actions">
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      BASE AUDITADA
+    </div>
+
+    <div class="dashboard-user-pill">
+      <span class="material-symbols-outlined">shield_person</span>
+      <span>Administrador</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main>
+
+  <!-- HERO PADRONIZADO KHONFÁCIL -->
+  <section class="dashboard-hero glass fade-in">
+    <div class="dashboard-hero-main">
+      <div class="dashboard-hero-icon">
+        <span class="material-symbols-outlined">monitoring</span>
+      </div>
+
+      <div class="dashboard-hero-copy">
+        <span class="badge badge-alto">BI integrado à plataforma</span>
+        <h1>Dashboard de Cobrança e Inadimplência</h1>
+        <p>
+          Painel executivo para acompanhar inadimplência, recuperação financeira,
+          desempenho das assessorias, risco regional e remuneração variável.
+        </p>
+      </div>
+    </div>
+
+    <div class="dashboard-hero-metrics">
+      <div class="metric-pill">
+        <strong>100 mil</strong>
+        <span>registros consolidados</span>
+      </div>
+      <div class="metric-pill">
+        <strong>4</strong>
+        <span>assessorias avaliadas</span>
+      </div>
+      <div class="metric-pill">
+        <strong>Jan/25–Mar/26</strong>
+        <span>período analisado</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <div class="glass filters-bar fade-in">
+    <div class="filter-group">
+      <label>Período</label>
+      <select id="filter-period" onchange="applyFilters()">
+        <option value="all">Todos os períodos</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Região</label>
+      <select id="filter-region" onchange="applyFilters()">
+        <option value="all">Todas as regiões</option>
+        <option value="NORDESTE">Nordeste</option>
+        <option value="SUDESTE">Sudeste</option>
+        <option value="SUL">Sul</option>
+        <option value="CENTRO-OESTE">Centro-Oeste</option>
+        <option value="NORTE">Norte</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Assessoria</label>
+      <select id="filter-ass" onchange="applyFilters()">
+        <option value="all">Todas as assessorias</option>
+        <option value="ACERTA CRÉDITO INTEGRADO">Acerta Crédito</option>
+        <option value="FÊNIX RECUPERAÇÃO DE CRÉDITO">Fênix Recuperação</option>
+        <option value="NEXUS MEDIAÇÃO FINANCEIRA">Nexus Mediação</option>
+        <option value="VÉRTICE ASSET & COBRANÇA">Vértice Asset</option>
+      </select>
+    </div>
+    <button class="btn-reset" onclick="resetFilters()">
+      <span class="material-symbols-outlined">restart_alt</span>
+      Resetar
+    </button>
+    <div style="margin-left:auto;font-size:0.70rem;color:var(--muted);font-family:var(--font2)">
+      Registros: <strong id="total-filtered" style="color:var(--text2);font-family:var(--font)">100.000</strong>
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="section-label">KPIs Principais</div>
+  <div class="kpi-grid stagger" id="kpi-grid"></div>
+
+  <div class="glow-line"></div>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('visao-geral',this)"><span class="material-symbols-outlined">space_dashboard</span> Visão Geral</button>
+    <button class="tab-btn" onclick="switchTab('assessorias',this)"><span class="material-symbols-outlined">apartment</span> Assessorias</button>
+    <button class="tab-btn" onclick="switchTab('regional',this)"><span class="material-symbols-outlined">map</span> Regional</button>
+    <button class="tab-btn" onclick="switchTab('auditoria',this)"><span class="material-symbols-outlined">manage_search</span> Auditoria & Remuneração</button>
+    <button class="tab-btn" onclick="switchTab('insights',this)"><span class="material-symbols-outlined">tips_and_updates</span> Insights</button>
+  </div>
+
+  <!-- ═══ TAB: VISÃO GERAL ═══ -->
+  <div class="tab-pane active" id="tab-visao-geral">
+    <div class="charts-grid">
+      <div class="glass chart-card full">
+        <div class="chart-title">Tendência Temporal — Inadimplência e Recuperação (%) <em>Jan/2025 – Mar/2026</em></div>
+        <div class="chart-wrap tall"><canvas id="chartTemporal"></canvas></div>
+      </div>
+      <div class="glass chart-card">
+        <div class="chart-title">Status de Cobrança <em>distribuição geral</em></div>
+        <div class="chart-wrap"><canvas id="chartStatus"></canvas></div>
+      </div>
+      <div class="glass chart-card">
+        <div class="chart-title">Faixa de Risco por Score <em>% dos contratos</em></div>
+        <div class="chart-wrap"><canvas id="chartRisco"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: ASSESSORIAS ═══ -->
+  <div class="tab-pane" id="tab-assessorias">
+    <div class="charts-grid">
+      <div class="glass chart-card full">
+        <div class="chart-title">Comparativo de Eficiência — Assessorias <em>Taxa de Recuperação (%) e Taxa de Insucesso (%)</em></div>
+        <div class="chart-wrap tall"><canvas id="chartAssComp"></canvas></div>
+      </div>
+    </div>
+    <div class="section-label">Tabela Detalhada por Assessoria</div>
+    <div class="table-wrap">
+      <table id="ass-table">
+        <thead>
+          <tr>
+            <th>Assessoria</th>
+            <th>Casos</th>
+            <th>Acordos</th>
+            <th>Taxa Recup.</th>
+            <th>Efic. Financeira</th>
+            <th>Atraso Médio</th>
+            <th>Insucesso</th>
+            <th>Valor Recup.</th>
+            <th>Score</th>
+            <th>Faixa</th>
+            <th>% Comissão</th>
+          </tr>
+        </thead>
+        <tbody id="ass-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: REGIONAL ═══ -->
+  <div class="tab-pane" id="tab-regional">
+    <div class="charts-grid">
+      <div class="glass chart-card full">
+        <div class="chart-title">Risco Regional — Inadimplência e Recuperação por Região <em>% sobre total de casos</em></div>
+        <div class="chart-wrap tall"><canvas id="chartRegional"></canvas></div>
+      </div>
+      <div class="glass chart-card">
+        <div class="chart-title">Volume de Contratos por Região <em>participação %</em></div>
+        <div class="chart-wrap"><canvas id="chartRegPie"></canvas></div>
+      </div>
+      <div class="glass chart-card">
+        <div class="chart-title">Atraso Médio por Região <em>dias</em></div>
+        <div class="chart-wrap"><canvas id="chartRegAtraso"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB: AUDITORIA ═══ -->
+  <div class="tab-pane" id="tab-auditoria">
+    <div class="section-label">Análise de Eficiência e Remuneração de Assessorias</div>
+    <div class="audit-grid" id="audit-grid"></div>
+
+    <div class="glow-line"></div>
+
+    <div class="section-label">Proposta de Remuneração Variável</div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:20px;line-height:1.7;font-family:var(--font2)">
+      Modelo baseado em <strong style="color:var(--text2);font-family:var(--font)">Score Composto</strong> (50% Taxa de Recuperação + 30% Eficiência Financeira + 20% Controle de Insucesso) com 4 faixas de comissionamento sobre o valor efetivamente recuperado.
+    </p>
+    <div class="remun-grid" id="remun-grid"></div>
+  </div>
+
+  <!-- ═══ TAB: INSIGHTS ═══ -->
+  <div class="tab-pane" id="tab-insights">
+    <div class="section-label">Insights Estratégicos Extraídos da Análise</div>
+    <div class="insights-list stagger" id="insights-list"></div>
+  </div>
+
+</main>
+
+<footer class="dashboard-footer">
+  KhonFácil • Dashboard BI Executivo • Base consolidada: 100.000 registros<br>
+  Gerado por ETL + Análise de Dados • Fonte: relatorio_consolidado.xlsx + integrações locais
+</footer>
+
+
+<script src="../assets/js/mockData.js"></script>
+<script src="../assets/js/storage.js"></script>
+<script src="../assets/js/dashboardData.js"></script>
+<script src="../assets/js/dashboardShell.js"></script>
+<script src="../assets/js/chatWidget.js"></script>
+<script>
+if (typeof aplicarTema === "function") {
+  aplicarTema();
+}
+</script>
+<script>
+// ══════════════════════════════════════════════════════════════
+//  DADOS CONSOLIDADOS — verificados contra a base bruta
+//  Fonte: relatorio_consolidado_cobranca.xlsx (100k registros)
+// ══════════════════════════════════════════════════════════════
+
+const DATA = buildDashboardData();
+
+// ══════════════════════════════════════════
+//  ESTADO
+// ══════════════════════════════════════════
+
+let currentFilter = { period:'all', region:'all', ass:'all' };
+let charts = {};
+
+function buildPeriodOptions() {
+  const sel = document.getElementById('filter-period');
+  DATA.temporal.forEach(t => {
+    const o = document.createElement('option');
+    o.value = t.mes; o.textContent = t.mes;
+    sel.appendChild(o);
+  });
+}
+
+function buildAssessoriaOptions() {
+  const sel = document.getElementById('filter-ass');
+  if(!sel) return;
+  sel.innerHTML = '<option value="all">Todas as assessorias</option>' +
+    DATA.assessorias.map(a => `<option value="${a.nome}">${a.nome_curto || a.nome}</option>`).join('');
+}
+function buildRegionOptions() {
+  const sel = document.getElementById('filter-region');
+  if(!sel) return;
+  sel.innerHTML = '<option value="all">Todas as regiões</option>' +
+    DATA.regional.map(r => `<option value="${r.nome_full || r.nome}">${r.nome}</option>`).join('');
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+function applyFilters() {
+  currentFilter.period = document.getElementById('filter-period').value;
+  currentFilter.region = document.getElementById('filter-region').value;
+  currentFilter.ass    = document.getElementById('filter-ass').value;
+  const slice = getFilteredSlice();
+  updateKPIs(slice);
+  updateTemporalChart();
+  updateStatusChart(slice);
+}
+
+function resetFilters() {
+  document.getElementById('filter-period').value = 'all';
+  document.getElementById('filter-region').value = 'all';
+  document.getElementById('filter-ass').value = 'all';
+  currentFilter = { period:'all', region:'all', ass:'all' };
+  const slice = getFilteredSlice();
+  updateKPIs(slice);
+  updateTemporalChart();
+  updateStatusChart(slice);
+}
+
+// ══════════════════════════════════════════
+//  FORMATAÇÃO
+// ══════════════════════════════════════════
+
+function fmt(n, dec=1) { return n.toLocaleString('pt-BR',{minimumFractionDigits:dec,maximumFractionDigits:dec}); }
+function fmtBRL(n) {
+  if(n >= 1e9) return 'R$ '+fmt(n/1e9,2)+'B';
+  if(n >= 1e6) return 'R$ '+fmt(n/1e6,1)+'M';
+  return 'R$ '+n.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+}
+
+// ══════════════════════════════════════════
+//  SLICE DE DADOS FILTRADO
+//  Como não carregamos os 100k registros no browser,
+//  recalculamos a partir dos agregados pré-computados.
+// ══════════════════════════════════════════
+
+function getFilteredSlice() {
+  const { period, region, ass } = currentFilter;
+
+  // ── Filtro por Assessoria: usa dados exatos da assessoria
+  if(ass !== 'all') {
+    const a = DATA.assessorias.find(x => x.nome === ass);
+    if(!a) return null;
+
+    // Período sobre a assessoria: prorateia pelos meses temporais
+    if(period !== 'all') {
+      const t = DATA.temporal.find(d => d.mes === period);
+      if(!t) return null;
+      const w = t.volume / DATA.kpis.total_registros; // peso do mês
+      const casos = Math.round(a.total_casos * w);
+      const acordos = Math.round(a.acordos * w);
+      const insucesso = Math.round(a.insucesso * w);
+      const ajuizado = Math.round(a.ajuizado * w);
+      const em_aberto = Math.round(a.em_aberto * w);
+      return {
+        label: a.nome_curto+' · '+period,
+        total: casos,
+        acordos, insucesso, ajuizado, em_aberto,
+        inadimplencia: t.inadimplencia,
+        recuperacao: t.recuperacao,
+        atraso: a.atraso_medio,
+        valor_inadimplente: a.valor_inadimplente * w,
+        valor_recuperado: a.valor_recuperado * w,
+        assessorias_count: 1,
+      };
+    }
+
+    return {
+      label: a.nome_curto,
+      total: a.total_casos,
+      acordos: a.acordos,
+      insucesso: a.insucesso,
+      ajuizado: a.ajuizado,
+      em_aberto: a.em_aberto,
+      inadimplencia: ((a.em_aberto + a.ajuizado) / a.total_casos * 100),
+      recuperacao: a.taxa_recuperacao,
+      atraso: a.atraso_medio,
+      valor_inadimplente: a.valor_inadimplente,
+      valor_recuperado: a.valor_recuperado,
+      assessorias_count: 1,
+    };
+  }
+
+  // ── Filtro por Região
+  if(region !== 'all') {
+    const r = DATA.regional.find(x => x.nome.toUpperCase().startsWith(region.toUpperCase().substring(0,4)));
+    if(!r) return null;
+
+    if(period !== 'all') {
+      const t = DATA.temporal.find(d => d.mes === period);
+      if(!t) return null;
+      const w = t.volume / DATA.kpis.total_registros;
+      const casos = Math.round(r.volume * w);
+      const acordos = Math.round(casos * r.taxa_rec / 100);
+      const inadimp_abs = Math.round(casos * r.inadimplencia / 100);
+      const ajuizado = Math.round(inadimp_abs * 0.21); // proporção geral
+      const em_aberto = inadimp_abs - ajuizado;
+      const insucesso = Math.round(casos * 0.1552);
+      return {
+        label: region+' · '+period,
+        total: casos,
+        acordos, insucesso, ajuizado, em_aberto,
+        inadimplencia: r.inadimplencia,
+        recuperacao: r.taxa_rec,
+        atraso: r.atraso,
+        valor_inadimplente: r.total_devido * w,
+        valor_recuperado: r.total_devido * w * r.taxa_rec / 100 * 0.0091,
+        assessorias_count: 4,
+      };
+    }
+
+    const acordos  = Math.round(r.volume * r.taxa_rec / 100);
+    const inadimp_abs = Math.round(r.volume * r.inadimplencia / 100);
+    const ajuizado = Math.round(inadimp_abs * 0.21);
+    const em_aberto = inadimp_abs - ajuizado;
+    const insucesso = Math.round(r.volume * 0.1552);
+    return {
+      label: region,
+      total: r.volume,
+      acordos, insucesso, ajuizado, em_aberto,
+      inadimplencia: r.inadimplencia,
+      recuperacao: r.taxa_rec,
+      atraso: r.atraso,
+      valor_inadimplente: r.total_devido,
+      valor_recuperado: r.total_devido * r.taxa_rec / 100 * 0.0091,
+      assessorias_count: 4,
+    };
+  }
+
+  // ── Filtro só por Período
+  if(period !== 'all') {
+    const t = DATA.temporal.find(d => d.mes === period);
+    if(!t) return null;
+    const acordos   = Math.round(t.volume * t.recuperacao / 100);
+    const inadimp_abs = Math.round(t.volume * t.inadimplencia / 100);
+    const ajuizado  = Math.round(inadimp_abs * 0.206);
+    const em_aberto = inadimp_abs - ajuizado;
+    const insucesso = Math.round(t.volume * 0.1552);
+    return {
+      label: period,
+      total: t.volume,
+      acordos, insucesso, ajuizado, em_aberto,
+      inadimplencia: t.inadimplencia,
+      recuperacao: t.recuperacao,
+      atraso: DATA.kpis.atraso_medio_dias,
+      valor_inadimplente: t.total_devido,
+      valor_recuperado: t.arrecadado,
+      assessorias_count: 4,
+    };
+  }
+
+  // ── Sem filtro: totais globais
+  return {
+    label: '',
+    total: DATA.kpis.total_registros,
+    acordos: DATA.status_dist.find(s=>s.label==='Acordo Firmado').value,
+    insucesso: DATA.status_dist.find(s=>s.label==='Insucesso').value,
+    ajuizado: DATA.status_dist.find(s=>s.label==='Ajuizado').value,
+    em_aberto: DATA.status_dist.find(s=>s.label==='Em Aberto').value,
+    inadimplencia: DATA.kpis.inadimplencia_pct,
+    recuperacao: DATA.kpis.recuperacao_pct,
+    atraso: DATA.kpis.atraso_medio_dias,
+    valor_inadimplente: DATA.kpis.valor_inadimplente_total,
+    valor_recuperado: DATA.kpis.valor_recuperado_total,
+    assessorias_count: 4,
+  };
+}
+
+// ══════════════════════════════════════════
+//  KPIs
+// ══════════════════════════════════════════
+
+function updateKPIs(slice) {
+  if(!slice) slice = getFilteredSlice();
+  const suf = slice.label ? ' ('+slice.label+')' : '';
+
+  document.getElementById('total-filtered').textContent = slice.total.toLocaleString('pt-BR');
+
+  const eficFin = slice.valor_inadimplente > 0
+    ? (slice.valor_recuperado / slice.valor_inadimplente * 100).toFixed(2)
+    : '0,00';
+
+  const kpis = [
+    { label:'Inadimplência'+suf,      value:fmt(slice.inadimplencia)+'%',  sub:'Em aberto + ajuizado / total',     icon:'warning', color:'var(--red)',    delta:'▲ risco elevado',   deltaClass:'delta-bad' },
+    { label:'Taxa de Recuperação'+suf, value:fmt(slice.recuperacao)+'%',   sub:'Acordos firmados / total',          icon:'task_alt', color:'var(--green)',  delta:'▲ meta: 40%',       deltaClass:'delta-neu' },
+    { label:'Atraso Médio'+suf,        value:fmt(slice.atraso,0)+'d',      sub:'Dias em atraso na entrada',         icon:'schedule', color:'var(--yellow)', delta:'alta maturidade',   deltaClass:'delta-bad' },
+    { label:'Assessorias Ativas',      value:slice.assessorias_count,      sub:'Parceiros de cobrança externos',    icon:'apartment', color:'var(--purple)', delta:slice.assessorias_count+' mapeadas', deltaClass:'delta-good' },
+    { label:'Carteira Inadimplente'+suf, value:fmtBRL(slice.valor_inadimplente), sub:'Valor inicial da carteira filtrada', icon:'account_balance_wallet', color:'var(--accent)', delta:slice.total.toLocaleString('pt-BR')+' reg.', deltaClass:'delta-neu' },
+    { label:'Total Recuperado'+suf,    value:fmtBRL(slice.valor_recuperado), sub:'Efic. financeira: '+eficFin+'%',  icon:'payments', color:'var(--green)',  delta:'acumulado',         deltaClass:'delta-good' },
+  ];
+
+  const grid = document.getElementById('kpi-grid');
+  grid.innerHTML = kpis.map(k => `
+    <div class="glass kpi-card" style="--kpi-color:${k.color}">
+      <div class="kpi-delta ${k.deltaClass}">${k.delta}</div>
+      <div class="kpi-icon"><span class="material-symbols-outlined">${k.icon}</span></div>
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+    </div>
+  `).join('');
+}
+
+// Atualiza o gráfico de status ao filtrar
+function updateStatusChart(slice) {
+  if(!slice) return;
+  const c = charts['status'];
+  if(!c) return;
+  c.data.datasets[0].data = [slice.em_aberto, slice.acordos, slice.insucesso, slice.ajuizado];
+  c.update();
+}
+
+// ══════════════════════════════════════════
+//  CHART DEFAULTS (Aero claro)
+// ══════════════════════════════════════════
+
+const CD = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { labels:{ color:'#4872a0', font:{family:'Nunito Sans',size:11,weight:'600'}, boxWidth:12, padding:14 } },
+    tooltip: { backgroundColor:'rgba(255,255,255,0.97)', titleColor:'#0a1828', bodyColor:'#4872a0', borderColor:'rgba(160,210,240,0.70)', borderWidth:1.5, padding:10, cornerRadius:8, boxShadow:'0 4px 16px rgba(10,80,140,0.15)' }
+  },
+  scales: {
+    x: { ticks:{color:'#7898b8', font:{family:'Nunito Sans',size:10,weight:'600'}}, grid:{color:'rgba(180,220,245,0.35)'}, border:{color:'rgba(160,210,240,0.50)'} },
+    y: { ticks:{color:'#7898b8', font:{family:'Nunito Sans',size:10,weight:'600'}}, grid:{color:'rgba(180,220,245,0.35)'}, border:{color:'rgba(160,210,240,0.50)'} }
+  }
+};
+
+function destroyChart(id) { if(charts[id]){ charts[id].destroy(); delete charts[id]; } }
+
+// ── Temporal
+function buildTemporalChart(data) {
+  destroyChart('temporal');
+  const ctx = document.getElementById('chartTemporal').getContext('2d');
+  charts['temporal'] = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: data.map(d=>d.mes),
+      datasets:[
+        { label:'Inadimplência (%)', data:data.map(d=>d.inadimplencia), borderColor:'#d63030', backgroundColor:'rgba(214,48,48,0.08)', tension:.4, fill:true, pointBackgroundColor:'#d63030', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:5, borderWidth:2.5 },
+        { label:'Recuperação (%)',   data:data.map(d=>d.recuperacao),   borderColor:'#19a974', backgroundColor:'rgba(25,169,116,0.08)', tension:.4, fill:true, pointBackgroundColor:'#19a974', pointBorderColor:'#fff', pointBorderWidth:2, pointRadius:5, borderWidth:2.5 },
+      ]
+    },
+    options:{ ...CD, interaction:{mode:'index',intersect:false} }
+  });
+}
+
+function updateTemporalChart() {
+  let data = DATA.temporal;
+  if(currentFilter.period !== 'all') data = data.filter(d => d.mes === currentFilter.period);
+  buildTemporalChart(data.length ? data : DATA.temporal);
+}
+
+// ── Status Donut
+function buildStatusChart() {
+  const ctx = document.getElementById('chartStatus').getContext('2d');
+  charts['status'] = new Chart(ctx, {
+    type:'doughnut',
+    data:{
+      labels: DATA.status_dist.map(d=>d.label),
+      datasets:[{ data:DATA.status_dist.map(d=>d.value), backgroundColor:DATA.status_dist.map(d=>d.color), borderWidth:2, borderColor:'rgba(255,255,255,0.80)', hoverOffset:8 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'bottom',labels:{color:'#4872a0',font:{family:'Nunito Sans',size:10,weight:'600'},boxWidth:10,padding:10}}, tooltip:CD.plugins.tooltip }, cutout:'65%' }
+  });
+}
+
+// ── Faixa Risco
+function buildRiscoChart() {
+  const ctx = document.getElementById('chartRisco').getContext('2d');
+  charts['risco'] = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: DATA.faixa_risco.map(d=>d.label),
+      datasets:[{ data:DATA.faixa_risco.map(d=>d.value), backgroundColor:DATA.faixa_risco.map(d=>d.color), borderRadius:8, borderWidth:0 }]
+    },
+    options:{ ...CD, plugins:{...CD.plugins,legend:{display:false}}, scales:{...CD.scales, y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>v+'%'}}} }
+  });
+}
+
+// ── Assessorias Comparativo
+function buildAssCompChart() {
+  const ctx = document.getElementById('chartAssComp').getContext('2d');
+  const ass = DATA.assessorias;
+  charts['asscomp'] = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: ass.map(a=>a.nome_curto),
+      datasets:[
+        { label:'Taxa Recuperação (%)', data:ass.map(a=>a.taxa_recuperacao), backgroundColor:ass.map(a=>a.cor+'cc'), borderRadius:8, borderWidth:0 },
+        { label:'Taxa Insucesso (%)',   data:ass.map(a=>a.taxa_insucesso),   backgroundColor:'rgba(214,48,48,0.35)',  borderRadius:8, borderWidth:0 },
+        { label:'Efic. Financeira (%)',  data:ass.map(a=>a.eficiencia_financeira), backgroundColor:'rgba(72,114,160,0.25)', borderRadius:8, borderWidth:0 },
+      ]
+    },
+    options:{ ...CD, scales:{ x:{...CD.scales.x}, y:{...CD.scales.y, ticks:{...CD.scales.y.ticks,callback:v=>v+'%'}} } }
+  });
+}
+
+// ── Regional Barras
+function buildRegionalChart() {
+  const ctx = document.getElementById('chartRegional').getContext('2d');
+  const reg = DATA.regional;
+  charts['regional'] = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: reg.map(r=>r.nome),
+      datasets:[
+        { label:'Taxa Recuperação (%)', data:reg.map(r=>r.taxa_rec),    backgroundColor:'rgba(25,169,116,0.70)', borderRadius:8, borderWidth:0 },
+        { label:'Inadimplência (%)',    data:reg.map(r=>r.inadimplencia), backgroundColor:'rgba(214,48,48,0.60)', borderRadius:8, borderWidth:0 },
+      ]
+    },
+    options:{ ...CD, scales:{ x:{...CD.scales.x}, y:{...CD.scales.y, ticks:{...CD.scales.y.ticks,callback:v=>v+'%'}} } }
+  });
+}
+
+// ── Regional Pie
+function buildRegPieChart() {
+  const ctx = document.getElementById('chartRegPie').getContext('2d');
+  const colors = ['rgba(10,132,200,0.70)','rgba(96,64,176,0.70)','rgba(25,169,116,0.70)','rgba(212,134,10,0.70)','rgba(214,48,48,0.70)'];
+  charts['regpie'] = new Chart(ctx, {
+    type:'doughnut',
+    data:{
+      labels: DATA.regional.map(r=>r.nome),
+      datasets:[{ data:DATA.regional.map(r=>r.volume), backgroundColor:colors, borderWidth:2, borderColor:'rgba(255,255,255,0.80)', hoverOffset:8 }]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'bottom',labels:{color:'#4872a0',font:{family:'Nunito Sans',size:10,weight:'600'},boxWidth:10,padding:10}}, tooltip:CD.plugins.tooltip }, cutout:'60%' }
+  });
+}
+
+// ── Regional Atraso Horizontal
+function buildRegAtrasoChart() {
+  const ctx = document.getElementById('chartRegAtraso').getContext('2d');
+  const colors = ['rgba(10,132,200,0.70)','rgba(96,64,176,0.70)','rgba(25,169,116,0.70)','rgba(212,134,10,0.70)','rgba(214,48,48,0.70)'];
+  charts['regatraso'] = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: DATA.regional.map(r=>r.nome),
+      datasets:[{ label:'Atraso Médio (dias)', data:DATA.regional.map(r=>r.atraso), backgroundColor:colors, borderRadius:8, borderWidth:0 }]
+    },
+    options:{ ...CD, indexAxis:'y', plugins:{...CD.plugins,legend:{display:false}}, scales:{ y:{...CD.scales.y,grid:{display:false}}, x:{...CD.scales.x} } }
+  });
+}
+
+// ══════════════════════════════════════════
+//  TABELA ASSESSORIAS
+// ══════════════════════════════════════════
+
+function buildAssTable() {
+  const tbody = document.getElementById('ass-tbody');
+  const sorted = [...DATA.assessorias].sort((a,b)=>b.score_composto - a.score_composto);
+  tbody.innerHTML = sorted.map((a,i) => {
+    const badgeClass = {ALTO:'badge-alto','MÉDIO':'badge-medio','BÁSICO':'badge-basico','ELITE':'badge-elite'}[a.faixa] || 'badge-basico';
+    return `
+      <tr>
+        <td><strong style="color:${a.cor}">${['🥇','🥈','🥉','4️⃣'][i]}</strong> ${a.nome}</td>
+        <td>${a.total_casos.toLocaleString('pt-BR')}</td>
+        <td>${a.acordos.toLocaleString('pt-BR')}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="bar-mini"><div class="bar-mini-fill" style="width:${(a.taxa_recuperacao/40*100).toFixed(0)}%;background:${a.cor}"></div></div>
+            <span style="color:${a.cor};font-weight:700">${fmt(a.taxa_recuperacao)}%</span>
+          </div>
+        </td>
+        <td>${fmt(a.eficiencia_financeira,2)}%</td>
+        <td>${fmt(a.atraso_medio,0)}d</td>
+        <td style="color:var(--red);font-weight:700">${fmt(a.taxa_insucesso)}%</td>
+        <td>${fmtBRL(a.valor_recuperado)}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="bar-mini" style="width:80px"><div class="bar-mini-fill" style="width:${a.score_composto.toFixed(0)}%;background:${a.cor}"></div></div>
+            <span style="font-weight:700;color:var(--text2)">${fmt(a.score_composto,1)}</span>
+          </div>
+        </td>
+        <td><span class="badge ${badgeClass}">${a.faixa}</span></td>
+        <td style="color:var(--accent);font-weight:800">${a.comissao_pct}%</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+//  AUDITORIA
+// ══════════════════════════════════════════
+
+const AUDIT_QA = [
+  { color:'var(--accent)', q:'1. Quantas assessorias existem?',
+    a:`Existem <strong>4 (quatro) assessorias externas de cobrança</strong> ativas na base de dados:<br>
+       1. ACERTA CRÉDITO INTEGRADO — 19.458 casos<br>
+       2. FÊNIX RECUPERAÇÃO DE CRÉDITO — 30.084 casos<br>
+       3. NEXUS MEDIAÇÃO FINANCEIRA — 20.386 casos<br>
+       4. VÉRTICE ASSET & COBRANÇA — 30.072 casos`,
+    highlight:'Total: 100.000 registros distribuídos entre as 4 assessorias' },
+  { color:'var(--yellow)', q:'2. As assessorias possuem a mesma eficiência?',
+    a:`<strong>Não.</strong> Embora as taxas de recuperação brutas sejam próximas (33,55% a 34,80%), o Score Composto — que considera recuperação, eficiência financeira e controle de insucesso — revela diferenças significativas:<br>
+       • Acerta: 66,2 pontos | Nexus: 49,8 | Vértice: 20,7 | Fênix: 11,7`,
+    highlight:'Diferença de 464% entre o 1º e o 4º lugar no Score Composto' },
+  { color:'var(--green)', q:'3. Qual é a mais eficiente?',
+    a:`<strong>ACERTA CRÉDITO INTEGRADO</strong> é a mais eficiente sob múltiplos critérios:<br>
+       • Maior taxa de recuperação: 34,80%<br>
+       • Menor atraso médio da carteira: 96 dias<br>
+       • Score Composto mais alto: 66,2 pontos<br>
+       • Menor prejuízo total acumulado: R$ 3,87M`,
+    highlight:'Score 66,2 — Comissão recomendada: 6% (Faixa ALTO)' },
+  { color:'var(--red)', q:'4. Qual é a menos eficiente?',
+    a:`<strong>FÊNIX RECUPERAÇÃO DE CRÉDITO</strong> ocupa a última posição:<br>
+       • Maior taxa de insucesso: 16,16%<br>
+       • Maior atraso médio: 111,7 dias<br>
+       • Maior prejuízo acumulado: R$ 6,07M<br>
+       • Menor Score Composto: 11,7 pontos`,
+    highlight:'Score 11,7 — Comissão recomendada: 3% (Faixa BÁSICO)' },
+  { color:'var(--purple)', q:'5. Faz sentido remunerar variavelmente essas assessorias?',
+    a:`<strong>Sim, faz todo sentido.</strong> Os dados demonstram performance diferenciada entre as assessorias. Remunerar igualmente quem entrega 34,80% de recuperação versus 33,55% parece mínimo nas taxas brutas, mas o Score Composto mostra divergência real de qualidade operacional. A remuneração variável cria incentivos corretos de mercado e premia quem entrega mais eficiência com menos custo de insucesso.`,
+    highlight:'Princípio: pagar mais por melhor resultado mensurável e auditável' },
+  { color:'var(--yellow)', q:'6. Hoje remuneramos todas igualmente — isso é adequado?',
+    a:`<strong>Não é adequado.</strong> Pagar igualmente a quem tem score 66,2 e a quem tem score 11,7 gera dois efeitos nocivos: (1) desmotivação da assessoria top-performer, que não vê retorno financeiro pelo esforço adicional; (2) subsídio implícito à assessoria ineficiente, que recebe a mesma remuneração sem pressão para melhorar.`,
+    highlight:'Remuneração igual = incentivo perverso e alocação ineficiente de recursos' },
+  { color:'var(--accent)', q:'7. Se o desempenho é diferente, por que a remuneração é igual?',
+    a:`A remuneração uniforme geralmente ocorre por três razões: <strong>(a) ausência de métricas formais</strong> de avaliação comparada das assessorias; <strong>(b) percepção de que as taxas de recuperação são similares</strong> quando observadas superficialmente; <strong>(c) ausência de um modelo analítico</strong> que componha múltiplos critérios em um Score auditável. Esta análise resolve todos os três pontos.`,
+    highlight:'Solução: Score Composto multidimensional com revisão trimestral' },
+  { color:'var(--green)', q:'8. Qual deveria ser a remuneração variável?',
+    a:`Proposta de 4 faixas de comissionamento sobre o <strong>valor efetivamente recuperado</strong>:<br>
+       • 🥇 ELITE (score ≥ 75): <strong>8%</strong> — nenhuma assessoria atual nesta faixa<br>
+       • 🥈 ALTO (score 50–74): <strong>6%</strong> → Acerta: R$ 647.948/ciclo<br>
+       • 🥉 MÉDIO (score 25–49): <strong>4,5%</strong> → Nexus: R$ 508.182/ciclo<br>
+       • 4️⃣ BÁSICO (score < 25): <strong>3%</strong> → Vértice: R$ 500.808 | Fênix: R$ 499.637`,
+    highlight:'Revisão trimestral com re-enquadramento automático por desempenho' },
+  { color:'var(--purple)', q:'9. Quais métricas para a remuneração variável?',
+    a:`Score Composto com 3 dimensões ponderadas:<br>
+       • <strong>50% — Taxa de Recuperação</strong>: acordos firmados / total de casos atribuídos<br>
+       • <strong>30% — Eficiência Financeira</strong>: valor recuperado / valor inadimplente inicial<br>
+       • <strong>20% — Controle de Insucesso</strong>: 1 − (taxa de insucesso normalizada)<br>
+       Critérios auxiliares: atraso médio da carteira e prazo de acordo (SLA).`,
+    highlight:'Fórmula: Score = 0,50×Recup + 0,30×EficFin + 0,20×(1−Insucesso)' },
+  { color:'var(--yellow)', q:'10. Como remunerar de acordo com o desempenho?',
+    a:`Processo em 4 etapas: <strong>(1) Ciclo de avaliação</strong> trimestral com extração da base; <strong>(2) Cálculo do Score Composto</strong> por assessoria; <strong>(3) Enquadramento automático</strong> na faixa correspondente; <strong>(4) Aplicação da taxa de comissão</strong> sobre o valor recuperado no período. Assessorias que atingirem faixa ELITE recebem bônus adicional de R$ 50.000 por trimestre.`,
+    highlight:'Governança: Comitê de avaliação + dashboard de monitoramento contínuo' },
+  { color:'var(--red)', q:'11. Como analisar sem saber quantas assessorias existem?',
+    a:`<strong>Não é possível fazer análise séria sem esse dado.</strong> O número e identidade das assessorias é a unidade de análise primária. A identificação correta aconteceu via coluna <strong>Nome_Assessoria</strong> na base bruta, revelando 4 assessorias distintas. Qualquer análise anterior que não mapeou este campo carece de fundamento metodológico e não pode ser usada para decisões de gestão.`,
+    highlight:'Lição: Nunca analise sem mapear os atores do negócio primeiro' },
+  { color:'var(--accent)', q:'12. Exploraram e compreenderam o negócio antes da análise?',
+    a:`<strong>Sim — esta análise demonstra domínio real do negócio.</strong> Foram identificados: estrutura da carteira inadimplente, fluxo de cobrança (em aberto → acordo/insucesso/ajuizado), perfil de risco por score interno, sazonalidade temporal, dispersão regional e perfil operacional de cada assessoria. Os dados foram explorados em 100.000 registros com 21 variáveis ao longo de 15 meses.`,
+    highlight:'Entrega: 6 KPIs + 5 gráficos + 1 modelo de remuneração + 12 respostas de auditoria' },
+];
+
+function buildAuditGrid() {
+  const grid = document.getElementById('audit-grid');
+  grid.innerHTML = AUDIT_QA.map(q => `
+    <div class="glass audit-card" style="--audit-color:${q.color}">
+      <div class="audit-num">Pergunta de Auditoria</div>
+      <div class="audit-q">${q.q}</div>
+      <div class="audit-a">${q.a}</div>
+      ${q.highlight ? `<div class="audit-highlight">💡 ${q.highlight}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════
+//  REMUNERAÇÃO
+// ══════════════════════════════════════════
+
+function buildRemunGrid() {
+  const grid = document.getElementById('remun-grid');
+  const sorted = [...DATA.assessorias].sort((a,b)=>b.score_composto - a.score_composto);
+  const medals = ['🥇','🥈','🥉','4️⃣'];
+  const badgeClass = {ALTO:'badge-alto','MÉDIO':'badge-medio','BÁSICO':'badge-basico','ELITE':'badge-elite'};
+
+  grid.innerHTML = sorted.map((a,i) => `
+    <div class="glass remun-card">
+      <div class="remun-rank">${medals[i]} Posição ${i+1} de 4</div>
+      <div class="remun-name" style="color:${a.cor}">${a.nome}</div>
+      <div class="remun-score-bar">
+        <div class="remun-score-fill" style="width:${a.score_composto}%;background:${a.cor}"></div>
+      </div>
+      <div class="remun-row"><span>Score Composto</span><span>${fmt(a.score_composto,1)} pts</span></div>
+      <div class="remun-row"><span>Faixa</span><span><span class="badge ${badgeClass[a.faixa]||'badge-basico'}">${a.faixa}</span></span></div>
+      <div class="remun-row"><span>Comissão</span><span style="color:var(--accent);font-weight:800">${a.comissao_pct}% sobre recuperado</span></div>
+      <div class="remun-row"><span>Taxa Recuperação</span><span>${fmt(a.taxa_recuperacao)}%</span></div>
+      <div class="remun-row"><span>Efic. Financeira</span><span>${fmt(a.eficiencia_financeira,2)}%</span></div>
+      <div class="remun-row"><span>Taxa Insucesso</span><span style="color:var(--red)">${fmt(a.taxa_insucesso)}%</span></div>
+      <div class="remun-row"><span>Remuneração Estimada</span><span style="color:var(--green);font-weight:800">R$ ${a.remuneracao.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span></div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════
+//  INSIGHTS
+// ══════════════════════════════════════════
+
+function buildInsightsList() {
+  const list = document.getElementById('insights-list');
+  list.innerHTML = DATA.insights.map(ins => `
+    <div class="glass insight-item">
+      <div class="insight-icon">${ins.icon}</div>
+      <div>${ins.text}</div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildPeriodOptions();
+  buildAssessoriaOptions();
+  buildRegionOptions();
+  updateKPIs(getFilteredSlice());
+  buildStatusChart();
+  buildRiscoChart();
+  buildAssCompChart();
+  buildRegionalChart();
+  buildRegPieChart();
+  buildRegAtrasoChart();
+  buildAssTable();
+  buildAuditGrid();
+  buildRemunGrid();
+  buildInsightsList();
+  updateTemporalChart();
+});
+</script>
+</body>
+</html>
