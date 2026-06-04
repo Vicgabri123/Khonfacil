@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KhonFácil  Autenticação</title>
+
+  <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<body class="auth-body">
+  <div class="auth-page auth-page-refined">
+
+    <section class="auth-hero auth-hero-refined">
+
+  <div class="brand-badge">
+    SOLUÇÃO ESTRATÉGICA PARA CONSÓRCIOS
+  </div>
+
+  <div class="hero-logo-frame">
+    <img
+      class="hero-logo"
+      src="assets/img/logo-khonfacil.png"
+      alt="KhonFácil Consórcios"
+    />
+  </div>
+
+  <h1 class="hero-title">
+    Gestão inteligente de inadimplência em consórcios.
+  </h1>
+
+  <p class="hero-summary">
+    BI executivo, cotas críticas, negociação digital e fidelidade em uma única plataforma.
+  </p>
+
+  <div class="hero-grid hero-grid-refined">
+
+    <div>
+      <span class="material-symbols-outlined">monitoring</span>
+      <strong>BI Executivo</strong>
+      <small>Painel analítico consolidado.</small>
+    </div>
+
+    <div>
+      <span class="material-symbols-outlined">support_agent</span>
+      <strong>Khon Bot</strong>
+      <small>Suporte e negociação 24h.</small>
+    </div>
+
+    <div>
+      <span class="material-symbols-outlined">workspace_premium</span>
+      <strong>Fidelidade</strong>
+      <small>Pontos e notificações.</small>
+    </div>
+
+  </div>
+
+</section>
+
+    <main class="auth-card auth-card-refined">
+      <div class="auth-logo">
+        <div class="logo-mark">
+          <img src="assets/img/logo-khonfacil-icon.png" alt="Ícone KhonFácil" />
+        </div>
+        <div>
+          <h2>Acesso à plataforma</h2>
+          <p>Entre com seu perfil para continuar</p>
+        </div>
+      </div>
+
+      <form id="loginForm">
+        <label for="email">E-mail</label>
+        <input id="email" type="email" autocomplete="email" value="admin@khonfacil.com" required />
+
+        <label for="senha">Senha</label>
+        <input id="senha" type="password" autocomplete="current-password" value="Admin@123" required />
+
+        <label for="perfil">Perfil</label>
+        <select id="perfil">
+          <option value="admin">Administrador</option>
+          <option value="cliente">Consorciado</option>
+        </select>
+
+        <button class="btn primary auth-submit" type="submit">
+          <span class="material-symbols-outlined">login</span>
+          Entrar na plataforma
+        </button>
+
+        <div class="auth-links">
+          <button type="button" class="link-btn" onclick="openModal('recoveryModal')">
+            <span class="material-symbols-outlined">lock_reset</span>
+            Esqueci minha senha
+          </button>
+          <button type="button" class="link-btn" onclick="openModal('signupModal')">
+            <span class="material-symbols-outlined">person_add</span>
+            Criar conta
+          </button>
+        </div>
+
+        <p id="loginMsg" class="form-msg"></p>
+      </form>
+
+      <div class="demo-box">
+        <strong>Credenciais de demonstração</strong>
+        <span><b>Admin:</b> admin@khonfacil.com / Admin@123 / 2FA: 123456</span>
+        <span><b>Cliente:</b> cliente@khonfacil.com / Cliente@123</span>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="twoFactorModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('twoFactorModal')">×</button>
+      <h2>Autenticação de dois fatores</h2>
+      <p>
+        Administradores precisam confirmar o código temporário.
+        Para o MVP acadêmico, use <strong>123456</strong>.
+      </p>
+      <input id="twoFactorCode" type="text" maxlength="6" placeholder="Código 2FA" />
+      <button class="btn primary" onclick="validate2FA()">
+        <span class="material-symbols-outlined">verified_user</span>
+        Validar 2FA
+      </button>
+      <p id="twoFactorMsg" class="form-msg"></p>
+    </div>
+  </div>
+
+  <div class="modal" id="recoveryModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('recoveryModal')">×</button>
+      <h2>Recuperar senha</h2>
+      <p>Um link demonstrativo será gerado com validade de 30 minutos.</p>
+      <input id="recoveryEmail" type="email" placeholder="Digite seu e-mail cadastrado" />
+      <button class="btn primary" onclick="sendRecovery()">
+        <span class="material-symbols-outlined">forward_to_inbox</span>
+        Enviar link
+      </button>
+      <p id="recoveryMsg" class="form-msg"></p>
+    </div>
+  </div>
+
+  <div class="modal" id="signupModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('signupModal')">×</button>
+      <h2>Criar conta de consorciado</h2>
+      <p>Cadastro local para demonstração do MVP.</p>
+
+      <input id="signupName" type="text" placeholder="Nome completo" />
+      <input id="signupCpf" type="text" placeholder="CPF" />
+      <input id="signupEmail" type="email" placeholder="E-mail" />
+      <input id="signupPhone" type="text" placeholder="Telefone" />
+      <input id="signupPassword" type="password" placeholder="Senha com mínimo de 8 caracteres" />
+
+      <label class="check-row">
+        <input id="signupConsent" type="checkbox" />
+        <span>Autorizo o uso dos dados para fins acadêmicos conforme LGPD.</span>
+      </label>
+
+      <button class="btn primary" onclick="signup()">
+        <span class="material-symbols-outlined">how_to_reg</span>
+        Cadastrar
+      </button>
+      <p id="signupMsg" class="form-msg"></p>
+    </div>
+  </div>
+
+  <script src="assets/js/mockData.js"></script>
+  <script src="assets/js/storage.js"></script>
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>
