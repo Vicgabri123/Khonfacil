@@ -104,8 +104,36 @@ function currentUser() {
 
 function currentCliente() {
   const user = currentUser();
-  if (!user || !user.clienteId) return null;
-  return getDB().clientes.find(c => c.id === user.clienteId) || null;
+  if (!user) return null;
+
+  const db = getDB();
+
+  if (user.clienteId) {
+    const clienteVinculado = db.clientes.find(c => Number(c.id) === Number(user.clienteId));
+    if (clienteVinculado) return clienteVinculado;
+  }
+
+  const clientePorEmail = db.clientes.find(c =>
+    String(c.email || "").toLowerCase() === String(user.email || "").toLowerCase()
+  );
+
+  if (clientePorEmail) {
+    const usuarioPersistido = db.usuarios.find(u => Number(u.id) === Number(user.id));
+    if (usuarioPersistido) {
+      usuarioPersistido.clienteId = clientePorEmail.id;
+      saveDB(db);
+    }
+
+    const session = getSession();
+    if (session) {
+      session.clienteId = clientePorEmail.id;
+      localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    }
+
+    return clientePorEmail;
+  }
+
+  return null;
 }
 
 function requireAuth(allowedRoles) {
