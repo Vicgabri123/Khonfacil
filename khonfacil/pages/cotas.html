@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KhonFácil — Cotas Críticas</title>
+  <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="../assets/img/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main-area">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+
+    <section class="page-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Gerenciar cotas</h2>
+            <p class="muted">Cadastro administrativo para alimentar Dashboard, relatórios e priorização</p>
+          </div>
+          <span class="badge danger">RN08</span>
+        </div>
+
+        <form id="cotaForm" class="form-grid">
+          <div><label>Cliente</label><select id="clienteId"></select></div>
+          <div><label>Assessoria</label><select id="assessoriaId"></select></div>
+          <div><label>Grupo</label><input id="grupo" required placeholder="G005"></div>
+          <div><label>Cota</label><input id="cota" required placeholder="001"></div>
+          <div><label>Região</label><select id="regiao"><option>Nordeste</option><option>Sudeste</option><option>Sul</option><option>Norte</option><option>Centro-Oeste</option></select></div>
+          <div><label>Bem entregue?</label><select id="bemEntregue"><option value="true">Sim</option><option value="false">Não</option></select></div>
+          <div><label>Valor do crédito</label><input id="valorCredito" type="number" value="80000"></div>
+          <div><label>Saldo devedor</label><input id="saldoDevedor" type="number" value="12000"></div>
+          <div><label>Parcelas atrasadas</label><input id="parcelasAtrasadas" type="number" value="2"></div>
+          <div><label>Dias de atraso</label><input id="diasAtraso" type="number" value="60"></div>
+          <div><label>Status</label><select id="status"><option>EM ABERTO</option><option>AJUIZADO</option><option>ADIMPLENTE</option><option>ACORDO FIRMADO</option></select></div>
+          <div><label>Vencimento</label><input id="vencimento" type="date" required></div>
+          <div class="full"><button class="btn primary" type="submit">Cadastrar cota</button></div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header"><h2>Lista priorizada</h2><span class="badge danger">RF03</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Cliente</th><th>Grupo/Cota</th><th>Saldo</th><th>Parcelas</th><th>Dias</th><th>Bem entregue</th><th>Status</th><th>Risco</th></tr></thead>
+            <tbody id="cotasTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+      </main>
+      <div class="footer-note">KhonFácil • MVP acadêmico • HTML, CSS, JavaScript e LocalStorage</div>
+    </div>
+  </div>
+
+  <script src="../assets/js/mockData.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/chatWidget.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    initApp("cotas", ["admin"]);
+    initCotas();
+  </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KhonFácil — Configurações</title>
+  <link rel="icon" type="image/x-icon" href="../assets/img/favicon.ico">
+  <link rel="apple-touch-icon" href="../assets/img/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0..1" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+    <div class="main-area">
+      <header class="topbar" id="topbar"></header>
+      <main class="content">
+
+    <section class="page-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Notificações e privacidade</h2>
+            <p class="muted">Alertas respeitam o canal e a antecedência configurados pelo usuário.</p>
+          </div>
+          <span class="badge info">RF10 • RN13</span>
+        </div>
+
+        <form id="configForm">
+          <label class="check-row"><input id="notifEmail" type="checkbox"><span>Receber alertas por e-mail</span></label>
+          <label class="check-row"><input id="notifSms" type="checkbox"><span>Receber alertas por SMS</span></label>
+
+          <label>Antecedência do alerta de vencimento</label>
+          <select id="antecedencia">
+            <option value="1">1 dia antes</option>
+            <option value="3">3 dias antes</option>
+            <option value="5">5 dias antes</option>
+            <option value="7">7 dias antes</option>
+          </select>
+
+          <label>Preferência visual</label>
+
+          <select id="temaVisual">
+            <option value="claro">Modo claro</option>
+            <option value="escuro">Modo escuro</option>
+          </select>
+          <label class="check-row"><input id="lgpd" type="checkbox"><span>Consentimento para tratamento de dados conforme LGPD</span></label>
+
+          <button class="btn primary" type="submit">Salvar configurações</button>
+          <p id="configMsg" class="form-msg"></p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Base de dados local</h2>
+            <p class="muted">A aplicação usa LocalStorage para simular banco de dados no navegador.</p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn secondary" onclick="restaurarBaseDemo()">Restaurar base demo</button>
+          <button class="btn danger" onclick="destroySession()">Sair da sessão</button>
+        </div>
+      </section>
+    </section>
+
+      </main>
+      <div class="footer-note">KhonFácil • MVP acadêmico • HTML, CSS, JavaScript e LocalStorage</div>
+    </div>
+  </div>
+
+  <script src="../assets/js/mockData.js"></script>
+  <script src="../assets/js/storage.js"></script>
+  <script src="../assets/js/app.js"></script>
+  <script src="../assets/js/chatWidget.js"></script>
+  <script src="../assets/js/cliente.js"></script>
+  <script>
+    initApp("configuracoes", ["cliente", "admin"]);
+    initConfiguracoes();
+  </script>
+</body>
+</html>
